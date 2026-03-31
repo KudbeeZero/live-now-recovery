@@ -1,35 +1,46 @@
-# Live Now Recovery — Impact Shadow Visualization
+# Live Now Recovery
 
 ## Current State
-The app has a Leaflet map (`ProviderMap.tsx`) with provider pins and helper ZIP coverage circles. The backend tracks `searchVolume` per ZIP and has `getLiveHelpers(zip)`. No impact visualization or predictive pulse exists yet.
+
+Fully functional ICP app with:
+- Provider directory with demo seed data and Cost Plus pricing cards (some labeled with "Mark Cuban" branding)
+- RBAC with role-based dashboards (User, Helper, Clinic, Admin)
+- Admin dashboard with SMS settings, registry, audit log
+- Impact Shadow map visualization with seafoam glow
+- Sentinel chat widget, SEO location pages
+- Components: CubanBridgeCard.tsx, MarkCubanCard.tsx both display Cost Plus drug prices
+- No Founders page, no blog system
 
 ## Requested Changes (Diff)
 
 ### Add
-- Backend: `getImpactData(zip)` — returns `{ savingsPot: Float; livesProjected: Float; helperCount: Nat; searchIntents: Nat }`. savingsPot = searchIntents * 120. livesProjected = (seededPop/500) * 0.088.
-- Backend: `getAllZipImpactData()` — returns array of all ZIP impact records for map overlay.
-- Frontend: `ShadowLayer` component embedded in `ProviderMap.tsx` — seafoam green glow circles over NE Ohio ZIPs, radius = searchIntents * 5 (min 400m), CSS pulsing animation tied to risk level.
-- Frontend: `ShadowTooltip` popup on circle click — "Community Wealth Reclaimed", "Safety Coverage", "Active Peer Bridge" lines.
-- Frontend: "Show Impact" toggle button on the map.
-- Frontend: `useAllZipImpactData` and `useZipImpactData` hooks in `useQueries.ts`.
-- CSS: `.shadow-pulse-calm` (4s) and `.shadow-pulse-rush` (0.8s) animation classes.
-- Rush trigger: ZIP auto-flags as high-urgency when searchIntents > 20 (frontend-side threshold using fetched data).
+- `/founder` page: Dom's story (10 years in MAT program, started at Brightside with one location, 46 years old), his mission, and a personal message of encouragement. Signed "— Dom, Founder". Warm amber tone.
+- Blog system backend: BlogPost type (id, title, slug, content, excerpt, publishedAt, isPublished, author). CRUD functions gated to admin.
+- `/blog` page: Public index of published posts, card grid layout, SEO meta per post.
+- `/blog/:slug` individual post page: Full content, author, date, back navigation.
+- Admin Blog Management tab in `/admin`: Create, edit, publish/unpublish posts via a form UI.
+- 5 pre-seeded blog posts (scientific/medical, MAT-focused).
+- Footer: Add subtle "Drug pricing transparency powered by Cost Plus Drugs" line.
+- Full responsive layout (portrait + landscape) across all pages, touch-optimized.
 
 ### Modify
-- `ProviderMap.tsx` — add ShadowLayer render and toggle state, accept `impactData` and `systemRiskLevel` props.
-- `HomePage.tsx` — pass `impactData` and `systemRiskLevel` to ProviderMap.
-- `backend.d.ts` — add `ImpactData` interface and new method signatures.
-- `useQueries.ts` — add impact data hooks.
+- `CubanBridgeCard.tsx` and `MarkCubanCard.tsx`: Remove all "Mark Cuban" name references. Keep Cost Plus pricing data (Naloxone $61.36, Naltrexone $22.94). Rename component references if needed.
+- `Footer.tsx`: Add Cost Plus attribution line.
+- `App.tsx`: Add routes for `/founder`, `/blog`, `/blog/:slug`.
+- `Header.tsx`: Add "Our Story" link to `/founder` and "Blog" link to `/blog` in nav.
 
 ### Remove
-- Nothing removed.
+- "Mark Cuban" name from all visible UI text in provider cards and pricing components.
 
 ## Implementation Plan
-1. Add `getImpactData` and `getAllZipImpactData` to Motoko backend with seeded ZIP population map.
-2. Update `backend.d.ts` with `ImpactData` type and two new method signatures.
-3. Add `useAllZipImpactData` hook to `useQueries.ts` with 30s refetch.
-4. Add CSS pulse animations to `index.css`.
-5. Build `ShadowLayer` logic inside `ProviderMap.tsx` — render seafoam circles per ZIP, show tooltip on click.
-6. Add "Show Impact" toggle button on the map.
-7. Wire `systemRiskLevel` prop to control animation speed (calm vs rush).
-8. Update `HomePage.tsx` to pass impact data and risk level to map.
+
+1. Add BlogPost type + stable storage + CRUD functions to `main.mo`.
+2. Update `backend.d.ts` with blog types and function signatures.
+3. Create `FounderPage.tsx` with story, mission, personal message, amber styling.
+4. Create `BlogPage.tsx` (index) and `BlogPostPage.tsx` (individual post).
+5. Update `AdminPage.tsx` to add Blog Management tab.
+6. Seed 5 blog posts in frontend constants (or via backend on first load).
+7. Strip "Mark Cuban" from `CubanBridgeCard.tsx` and `MarkCubanCard.tsx`.
+8. Update `Footer.tsx` with Cost Plus attribution.
+9. Update `App.tsx` routes and `Header.tsx` nav links.
+10. Apply responsive CSS improvements across all pages.
